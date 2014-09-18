@@ -1,0 +1,16 @@
+avatars:
+    user1:
+        avatar: "http://avatar1.url"
+    user2:
+        avatar: "http://avatar2.url"
+usernames:
+    -: user1
+    -: user2
+templates:
+    -: Bug
+    -: Feature
+    -: Support
+types:
+    -: Bug
+    -: Feature request
+    -: Support request

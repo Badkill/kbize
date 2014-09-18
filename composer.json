@@ -1,0 +1,31 @@
+{
+    "name": "badkill/kbize",
+    "description": "Kanbanize CLI client",
+    "license": "GPL-3.0+",
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "mikey179/vfsStream": "1.*",
+        "silex/silex": "~1.1",
+        "behat/behat": "2.4.*@stable"
+    },
+    "require": {
+        "guzzlehttp/guzzle": "~4.0",
+        "symfony/console": "2.*",
+        "symfony/dependency-injection": "2.*",
+        "symfony/options-resolver": "2.*",
+        "symfony/filesystem": "2.*",
+        "symfony/config": "2.*",
+        "symfony/finder": "2.*",
+        "symfony/yaml": "2.*",
+        "symfony/process": "2.*"
+    },
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "autoload": {
+        "psr-0": {
+            "Kbize": "src/",
+            "Skel": "src/"
+        }
+    }
+}
