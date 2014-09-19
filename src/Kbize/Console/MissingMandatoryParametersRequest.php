@@ -29,7 +29,8 @@ class MissingMandatoryParametersRequest
                 } else {
                     $question = new ChoiceQuestion(
                         "Choose a $mandatoryParam",
-                        $availableValues
+                        $availableValues,
+                        array_keys($availableValues)[0]
                     );
 
                     $question->setErrorMessage("The $mandatoryParam `%s` is not valid.");

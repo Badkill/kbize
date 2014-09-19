@@ -43,9 +43,14 @@ abstract class MatcherStrategy
                 'key' => substr($filter, 0, $pos),
                 'value' => substr($filter, $pos + 1)
             ];
-        } elseif (0 === strpos($filter, '@')) {
+        } elseif (0 === strpos($filter, '#')) {
             return [
                 'key' => 'taskid',
+                'value' => substr($filter, 1)
+            ];
+        } elseif (0 === strpos($filter, '@')) {
+            return [
+                'key' => 'assignee',
                 'value' => substr($filter, 1)
             ];
         }

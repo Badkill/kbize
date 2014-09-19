@@ -21,7 +21,7 @@ class MissingMandatoryParametersRequestTest extends \PHPUnit_Framework_TestCase
             'key2' => 'value2',
         ];
 
-        $question = (new ChoiceQuestion('Choose a first', $availableValues))
+        $question = (new ChoiceQuestion('Choose a first', $availableValues, 'key1'))
             ->setErrorMessage('The first `%s` is not valid.')
         ;
 
