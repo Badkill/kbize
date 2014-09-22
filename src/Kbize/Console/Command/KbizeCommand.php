@@ -6,9 +6,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
 
 use Kbize\KbizeKernel;
+use Kbize\Exception\ForbiddenException;
 use Kbize\Console\MissingMandatoryParametersRequest;
 
 abstract class KbizeCommand extends Command
@@ -54,5 +55,43 @@ abstract class KbizeCommand extends Command
 
     protected function interact(InputInterface $input, OutputInterface $output) {
         $this->missingParameterRequest->enrichInputs($input, $output, $this->getHelper('question'));
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $needAuth = false;
+        for ($i = 0; $i < 5; $i++) {
+            try {
+                if ($needAuth) {
+                    $this->authenticate($input, $output);
+                }
+                $this->doExecute($input, $output);
+                break;
+            } catch (ForbiddenException $e) {
+                $needAuth = true;
+            }
+        }
+    }
+
+    protected function authenticate(InputInterface $input, OutputInterface $output)
+    {
+        $helper = $this->getHelper('question');
+
+        $question = new Question('Insert your login email: ');
+        $question->setValidator(function ($email) {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new \RuntimeException("`$email` is not a valid email address");
+            }
+            return $email;
+        });
+        $question->setMaxAttempts(3);
+        $username = $helper->ask($input, $output, $question);
+
+        $question = new Question('Insert your password: ');
+        $question->setHidden(true);
+        $question->setHiddenFallback(false);
+        $password = $helper->ask($input, $output, $question);
+
+        $this->kernel->authenticate($username, $password);
     }
 }

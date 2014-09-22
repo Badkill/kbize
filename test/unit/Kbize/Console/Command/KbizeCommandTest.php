@@ -37,6 +37,70 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertRegExp("/foo.*bar\n.*bar.*foo/", $commandTester->getDisplay());
     }
 
+    public function testAskForUsernameAndPasswordInCaseOfForbiddenException()
+    {
+        $username = 'username@email.com';
+        $password = 'password';
+
+        $this->kernel->expects($this->any())
+            ->method('getAllTasks')
+            ->will($this->throwException(new \Kbize\Exception\ForbiddenException()))
+        ;
+
+        $this->kernel->expects($this->any())
+            ->method('authenticate')
+            ->with($username, $password)
+        ;
+
+        $command = $this->application->find('sample:command');
+
+        $dialog = $command->getHelper('question');
+        $dialog->setInputStream($this->getInputStream("
+            $username\n$password\n
+            $username\n$password\n
+            $username\n$password\n
+            $username\n$password\n
+            $username\n$password
+        ")); //FIXME:!!
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            '--option' => 'foo',
+        ]);
+    }
+
+    public function testRepeatDoExecuteAfterSuccessfulAuthentication()
+    {
+        $username = 'username@email.com';
+        $password = 'password';
+
+        $this->kernel->expects($this->exactly(2))
+            ->method('getAllTasks')
+        ;
+
+        $this->kernel->expects($this->at(0))
+            ->method('getAllTasks')
+            ->will($this->throwException(new \Kbize\Exception\ForbiddenException()))
+        ;
+
+        $this->kernel->expects($this->once())
+            ->method('authenticate')
+            ->with($username, $password)
+        ;
+
+        $command = $this->application->find('sample:command');
+
+        $dialog = $command->getHelper('question');
+        $dialog->setInputStream($this->getInputStream("$username\n$password"));
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            '--option' => 'foo',
+        ]);
+    }
+
     protected function getInputStream($input)
     {
         $stream = fopen('php://memory', 'r+', false);
@@ -75,8 +139,10 @@ class SampleCommand extends KbizeCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function doExecute(InputInterface $input, OutputInterface $output)
     {
-
+        $this->kernel
+            ->getAllTasks(1)
+        ;
     }
 }

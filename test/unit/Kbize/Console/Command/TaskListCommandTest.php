@@ -46,6 +46,11 @@ class TaskListTest extends \PHPUnit_Framework_TestCase
         $this->markTestSkipped();
     }
 
+    public function testDelegateRenderToTaskShowOutputObjectIfShowOptionIsSetted()
+    {
+        $this->markTestSkipped();
+    }
+
     private function simpleTaskCollection($filters = [])
     {
         $yamlParser = new Parser();
@@ -65,7 +70,6 @@ class TaskListTest extends \PHPUnit_Framework_TestCase
 
         return $taskCollection;
     }
-
 
     /* protected function getInputStream($input) */
     /* { */

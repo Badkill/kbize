@@ -1,29 +1,27 @@
 <?php
-namespace Kbize\Fake;
+namespace Kbize;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
 
 use Kbize\Collection\Tasks;
 use Kbize\Exception\ForbiddenException;
+use Kbize\Sdk\KbizeSdk;
 
-class KbizeKernel implements \Kbize\KbizeKernel
+class RealKbizeKernel implements KbizeKernel
 {
     private $isAuthenticated = false;
 
-    public function __construct()
+    public function __construct(KbizeSdk $sdk)
     {
-
+        $this->sdk = $sdk;
     }
 
     public function authenticate($email, $password)
     {
-        if ("user@email.com" === $email && "secret" === $password) {
-            $this->isAuthenticated = true;
-            return true;
-        }
-
-        throw new ForbiddenException();
+        $loginResponse = $this->sdk->login($email, $password);
+        $this->sdk->setApiKey($loginResponse->apikey());
+        return $loginResponse;
     }
 
     public function getProjects()
@@ -43,11 +41,7 @@ class KbizeKernel implements \Kbize\KbizeKernel
 
     public function getAllTasks($boardId)
     {
-        if (!$this->isAuthenticated) {
-            throw new ForbiddenException();
-        }
-
-        $yamlParser = new Parser();
-        return Tasks::fromArray($yamlParser->parse(file_get_contents('fixtures/tasks.yml')));
+        $allTaskResponse = $this->sdk->getAllTasks($boardId);
+        return Tasks::fromArray($allTaskResponse->toArray());
     }
 }

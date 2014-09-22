@@ -3,9 +3,11 @@ namespace Kbize\Console;
 
 class String
 {
-    public function __construct($value)
+    public function __construct($value, $fg = null, $options = [])
     {
         $this->value = (string) $value;
+        $this->fg = $fg;
+        $this->options = $options;
     }
 
     public static function box($value)
@@ -25,14 +27,38 @@ class String
     public function color($color)
     {
         if ($color) {
-            return new self("<fg=$color>$this->value</fg=$color>");
+            return new self($this->value, $color, $this->options);
         }
 
         return $this;
     }
 
+    public function bold()
+    {
+        return new self($this->value, $this->fg, array_merge($this->options, ['bold']));
+    }
+
     public function __toString()
     {
+        if ($this->fg || $this->options) {
+            $tag = "";
+
+            if ($this->fg) {
+                $tag .= "fg=$this->fg";
+            }
+
+            if ($this->options) {
+                if ($tag) {
+                    $tag .= ';';
+                }
+
+                $options = implode($this->options, ',');
+                $tag .= "options=$options";
+            }
+
+            return "<$tag>$this->value</$tag>";
+        }
+
         return $this->value;
     }
 }

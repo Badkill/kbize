@@ -13,6 +13,7 @@ use Kbize\KbizeKernel;
 use Kbize\Console\MissingMandatoryParametersRequest;
 use Kbize\Console\String;
 use Kbize\Console\Output\TaskListOutput;
+use Kbize\Console\Output\TaskShowOutput;
 
 class TaskListCommand extends KbizeCommand
 {
@@ -28,6 +29,12 @@ class TaskListCommand extends KbizeCommand
                 '',
                 InputOption::VALUE_NONE,
                 'Display a minimal subset of information'
+            )
+            ->addOption(
+                'show',
+                's',
+                InputOption::VALUE_NONE,
+                'Display details for each tasks'
             )
             ->addOption(
                 'own',
@@ -58,11 +65,19 @@ class TaskListCommand extends KbizeCommand
         ]);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function doExecute(InputInterface $input, OutputInterface $output)
     {
-        $taskCollection = $this->kernel->getAllTasks($input->getOption('board'));
+        $taskCollection = $this->kernel
+            ->getAllTasks($input->getOption('board'))
+            ->filter($input->getArgument('filters'))
+        ;
 
-        $taskListOutput = new TaskListOutput($output, $this->getHelper('table'));
-        $taskListOutput->render($taskCollection->filter($input->getArgument('filters')));
+        if ($input->getOption('show')) {
+            $taskShowOutput = new TaskShowOutput($output, $this->getHelper('alternate-table'));
+            $taskShowOutput->render($taskCollection);
+        } else {
+            $taskListOutput = new TaskListOutput($output, $this->getHelper('table'));
+            $taskListOutput->render($taskCollection);
+        }
     }
 }
