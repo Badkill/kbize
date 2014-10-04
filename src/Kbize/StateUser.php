@@ -20,8 +20,10 @@ class StateUser implements User
 
     public function update(array $userData)
     {
+        $this->replaceData($userData);
+
         $this->configRepository
-            ->replace($userData)
+            ->replace($this->data)
             ->store()
         ;
 
@@ -42,5 +44,12 @@ class StateUser implements User
         }
 
         return null;
+    }
+
+    private function replaceData(array $userData)
+    {
+        //TODO:! ensure data is valid
+
+        $this->data = $userData;
     }
 }

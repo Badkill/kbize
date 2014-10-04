@@ -2,12 +2,16 @@
 <?php
 namespace Kbize;
 
-use Kbize\Console\Command\TaskListCommand;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Dumper;
+use Kbize\Console\Command\TaskListCommand;
 use Kbize\Console\Helper\AlternateTableHelper;
-use Kbize\Sdk\HttpKbizeSdk;
 use Kbize\Http\GuzzleClient;
 use GuzzleHttp\Client;
+use Kbize\Sdk\HttpKbizeSdk;
+use Kbize\StateUser;
+use Kbize\Config\FilesystemConfigRepository;
 /* use KbizeCli\Console\Helper\TableWithRowTitleHelper; */
 
 /* // the autoloader */
@@ -28,11 +32,14 @@ $application->add(new TaskListCommand(
                     'base_url' => 'http://localhost:8000',
                 ])
             )
+        ),
+        new StateUser(
+            new FilesystemConfigRepository(
+                '/tmp/user.yml', //FIXME:!
+                new Parser(),
+                new Dumper()
+            )
         )
     )
 ));
 $application->run();
-
-function kernel()
-{
-}

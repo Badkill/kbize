@@ -59,7 +59,7 @@ abstract class KbizeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $needAuth = false;
+        $needAuth = !$this->kernel->isAuthenticated();
         for ($i = 0; $i < 5; $i++) {
             try {
                 if ($needAuth) {

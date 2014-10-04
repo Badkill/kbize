@@ -47,6 +47,6 @@ class FilesystemConfigRepository implements ConfigRepository
     public function store()
     {
         //TODO:! extract class to check file_put_contents
-        file_put_contents($this->filePath, $this->dumper->dump($this->data));
+        file_put_contents($this->filePath, $this->dumper->dump($this->data, 4));
     }
 }
