@@ -54,15 +54,6 @@ class TaskListCommand extends KbizeCommand
                 []
             )
         ;
-
-        $this->missingParameterRequest = new MissingMandatoryParametersRequest([
-            'project' => function () {
-                return $this->kernel->getProjects();
-            },
-            'board' => function (InputInterface $input) {
-                return $this->kernel->getBoards($input->getOption('project'));
-            }
-        ]);
     }
 
     protected function doExecute(InputInterface $input, OutputInterface $output)

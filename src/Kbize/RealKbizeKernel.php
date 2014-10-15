@@ -36,17 +36,12 @@ class RealKbizeKernel implements KbizeKernel
 
     public function getProjects()
     {
-        return [
-            '1' => 'first project',
-        ];
+        return $this->sdk->getProjectsAndBoards()->projects();
     }
 
     public function getBoards($projectId)
     {
-        return [
-            '1' => 'first board',
-            '2' => 'second board',
-        ];
+        return $this->sdk->getProjectsAndBoards()->boards($projectId);
     }
 
     public function getAllTasks($boardId)

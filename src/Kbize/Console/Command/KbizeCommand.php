@@ -9,17 +9,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
 use Kbize\KbizeKernel;
+use Kbize\KbizeKernelFactory;
 use Kbize\Exception\ForbiddenException;
 use Kbize\Console\MissingMandatoryParametersRequest;
 
 abstract class KbizeCommand extends Command
 {
     protected $kernel;
+    protected $kernelFactory;
 
-    public function __construct(KbizeKernel $kernel)
+    public function __construct(KbizeKernelFactory $kernelFactory)
     {
         parent::__construct();
-        $this->kernel = $kernel;
+        $this->kernelFactory = $kernelFactory;
     }
 
     protected function configure()
@@ -53,12 +55,31 @@ abstract class KbizeCommand extends Command
         ;
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output) {
-        $this->missingParameterRequest->enrichInputs($input, $output, $this->getHelper('question'));
+    protected function missingParameterRequestSetUp()
+    {
+        $this->missingParameterRequest = new MissingMandatoryParametersRequest([
+            'project' => function () {
+                $projects = [];
+                foreach($this->kernel->getProjects() as $project) {
+                    $projects[$project['id']] = $project['name'];
+                }
+
+                return $projects;
+            },
+            'board' => function (InputInterface $input) {
+                $boards = [];
+                foreach($this->kernel->getBoards($input->getOption('project')) as $board) {
+                    $boards[$board['id']] = $board['name'];
+                }
+
+                return $boards;
+            }
+        ]);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->kernel = $this->kernelFactory->kernel([]);
         $needAuth = !$this->kernel->isAuthenticated();
         for ($i = 0; $i < 5; $i++) {
             try {
@@ -71,6 +92,13 @@ abstract class KbizeCommand extends Command
                 $needAuth = true;
             }
         }
+
+        $this->missingParameterRequestSetUp();
+        $this->missingParameterRequest->enrichInputs(
+            $input,
+            $output,
+            $this->getHelper('question')
+        );
     }
 
     protected function authenticate(InputInterface $input, OutputInterface $output)
