@@ -24,6 +24,10 @@ class MissingMandatoryParametersRequest
         foreach ($this->mandatoryParams as $mandatoryParam => $availableValuesCallback) {
             if (!$input->getOption($mandatoryParam)) {
                 $availableValues = call_user_func($availableValuesCallback, $input);
+                if (0 === count($availableValues)) {
+                    return;
+                }
+
                 if (1 === count($availableValues)) {
                     $value = key($availableValues);
                 } else {

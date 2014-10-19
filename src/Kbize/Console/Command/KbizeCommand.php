@@ -11,6 +11,7 @@ use Symfony\Component\Console\Question\Question;
 use Kbize\KbizeKernel;
 use Kbize\KbizeKernelFactory;
 use Kbize\Exception\ForbiddenException;
+use Kbize\Exception\MissingSettingsException;
 use Kbize\Console\MissingMandatoryParametersRequest;
 
 abstract class KbizeCommand extends Command
@@ -27,13 +28,13 @@ abstract class KbizeCommand extends Command
     protected function configure()
     {
         $this
-            ->addOption(
-                'env',
-                'e',
-                InputOption::VALUE_OPTIONAL,
-                'set the environment for different configuration',
-                'prod'
-            )
+            /* ->addOption( */
+            /*     'env', */
+            /*     'e', */
+            /*     InputOption::VALUE_OPTIONAL, */
+            /*     'set the environment for different configuration', */
+            /*     'prod' */
+            /* ) */
             ->addOption(
                 'project',
                 'p',
@@ -52,6 +53,13 @@ abstract class KbizeCommand extends Command
                 InputOption::VALUE_NONE,
                 'Do not use cached data'
             )
+            ->addOption(
+                'profile',
+                'e',
+                InputOption::VALUE_REQUIRED,
+                'You can use different configuration for different profile',
+                'default'
+            )
         ;
     }
 
@@ -60,9 +68,9 @@ abstract class KbizeCommand extends Command
         $this->missingParameterRequest = new MissingMandatoryParametersRequest([
             'project' => function () {
                 $projects = [];
-                foreach($this->kernel->getProjects() as $project) {
-                    $projects[$project['id']] = $project['name'];
-                }
+                /* foreach($this->kernel->getProjects() as $project) { */
+                /*     $projects[$project['id']] = $project['name']; */
+                /* } */
 
                 return $projects;
             },
@@ -79,26 +87,36 @@ abstract class KbizeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->kernel = $this->kernelFactory->kernel([]);
+        for ($i = 0; $i < 5; $i++) {
+            try {
+                $this->kernel = $this->kernelFactory->forProfile($input->getOption('profile'));
+            } catch (MissingSettingsException $e) {
+                $settingsWrapper = $e->settingsWrapper();
+                $settingsWrapper->add($this->enrichSettings($input, $output));
+                $settingsWrapper->store();
+            }
+        }
+
         $needAuth = !$this->kernel->isAuthenticated();
         for ($i = 0; $i < 5; $i++) {
             try {
                 if ($needAuth) {
                     $this->authenticate($input, $output);
                 }
+
+                $this->missingParameterRequestSetUp();
+                $this->missingParameterRequest->enrichInputs(
+                    $input,
+                    $output,
+                    $this->getHelper('question')
+                );
+
                 $this->doExecute($input, $output);
                 break;
             } catch (ForbiddenException $e) {
                 $needAuth = true;
             }
         }
-
-        $this->missingParameterRequestSetUp();
-        $this->missingParameterRequest->enrichInputs(
-            $input,
-            $output,
-            $this->getHelper('question')
-        );
     }
 
     protected function authenticate(InputInterface $input, OutputInterface $output)
@@ -121,5 +139,20 @@ abstract class KbizeCommand extends Command
         $password = $helper->ask($input, $output, $question);
 
         $this->kernel->authenticate($username, $password);
+    }
+
+    protected function enrichSettings(InputInterface $input, OutputInterface $output)
+    {
+        $helper = $this->getHelper('question');
+
+        $question = new Question(
+            "Insert kanbanize api url: \n[ default = http://kanbanize.com/index.php/api/kanbanize/ ]\n",
+            'http://kanbanize.com/index.php/api/kanbanize/'
+        );
+        $url = $helper->ask($input, $output, $question);
+
+        return [
+            'url' => $url,
+        ];
     }
 }

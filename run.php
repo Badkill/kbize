@@ -17,5 +17,7 @@ $helperSet->set(new AlternateTableHelper());
 /* $helperSet->set(new TableWithRowTitleHelper()); */
 $application->setHelperSet($helperSet);
 
-$application->add(new TaskListCommand(new KbizeKernelFactory()));
+$application->add(new TaskListCommand(
+    new KbizeKernelFactory()
+));
 $application->run();

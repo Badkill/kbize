@@ -25,7 +25,7 @@ class HttpKbizeSdk implements KbizeSdk
 
     public function login($email, $password)
     {
-        $response = $this->client->post('/login', [
+        $response = $this->client->post('login', [
             'email' => $email,
             'pass'  => $password
         ], [
@@ -38,7 +38,7 @@ class HttpKbizeSdk implements KbizeSdk
 
     public function getProjectsAndBoards()
     {
-        $response = $this->client->post('/get_projects_and_boards', [], [
+        $response = $this->client->post('get_projects_and_boards', [], [
             'Content-Type' => 'application/json',
             'Accept'       => 'application/json',
             'apikey'       => $this->apikey,
@@ -84,7 +84,7 @@ class HttpKbizeSdk implements KbizeSdk
 
     public function getAllTasks($boardId, array $parameters = array())
     {
-        $response = $this->client->post('/get_all_tasks', [
+        $response = $this->client->post('get_all_tasks', [
             'boardid' => $boardId,
         ], [
             'Content-Type' => 'application/json',

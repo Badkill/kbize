@@ -122,4 +122,31 @@ class MissingMandatoryParametersRequestTest extends \PHPUnit_Framework_TestCase
 
         $missingParameterRequest->enrichInputs($this->input, $this->output, $this->questionHelper);
     }
+
+    public function testDoNotAskForMandatoryOptionIfItIsMissingButNoValuesAreAvailable()
+    {
+        $availableValues = [];
+
+        $this->questionHelper->expects($this->never())
+            ->method('ask')
+        ;
+
+        $this->input->expects($this->at(0))
+            ->method('getOption')
+            ->with('first')
+            ->will($this->returnValue(null))
+        ;
+
+        $this->input->expects($this->never())
+            ->method('setOption')
+        ;
+
+        $missingParameterRequest = new MissingMandatoryParametersRequest([
+            'first' => function () use ($availableValues) {
+                return $availableValues;
+            },
+        ]);
+
+        $missingParameterRequest->enrichInputs($this->input, $this->output, $this->questionHelper);
+    }
 }

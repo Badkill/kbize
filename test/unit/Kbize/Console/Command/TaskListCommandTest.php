@@ -9,12 +9,17 @@ use Symfony\Component\Yaml\Dumper;
 use Kbize\Console\Command\TaskListCommand;
 use Kbize\Collection\Tasks;
 
-class TaskListTest extends \PHPUnit_Framework_TestCase
+class TaskListCommandTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
         $this->kernel = $this->getMock('Kbize\KbizeKernel');
-        $this->taskList = new TaskListCommand($this->kernel);
+        $this->kernelFactory = $this->getMock('Kbize\KbizeKernelFactory');
+        $this->kernelFactory->expects($this->any())
+            ->method('forProfile')
+            ->will($this->returnValue($this->kernel))
+        ;
+        $this->taskList = new TaskListCommand($this->kernelFactory);
         $this->application = new Application();
         $this->application->add($this->taskList);
     }
@@ -32,6 +37,9 @@ class TaskListTest extends \PHPUnit_Framework_TestCase
         ;
 
         $command = $this->application->find('task:list');
+        $dialog = $command->getHelper('question');
+        $dialog->setInputStream($this->getInputStream("http://www.exaple.url\nemail@email.com\npassword"));
+
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
@@ -71,12 +79,12 @@ class TaskListTest extends \PHPUnit_Framework_TestCase
         return $taskCollection;
     }
 
-    /* protected function getInputStream($input) */
-    /* { */
-    /*     $stream = fopen('php://memory', 'r+', false); */
-    /*     fputs($stream, $input); */
-    /*     rewind($stream); */
+    protected function getInputStream($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fputs($stream, $input);
+        rewind($stream);
 
-    /*     return $stream; */
-    /* } */
+        return $stream;
+    }
 }

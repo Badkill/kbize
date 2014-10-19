@@ -3,7 +3,9 @@ namespace Kbize;
 
 interface KbizeKernel
 {
-    public function authenticate($username, $password);
+    public function isAuthenticated();
+
+    public function authenticate($email, $password);
 
     public function getProjects();
 

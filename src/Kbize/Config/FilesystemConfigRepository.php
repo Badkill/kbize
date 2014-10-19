@@ -17,6 +17,10 @@ class FilesystemConfigRepository implements ConfigRepository
         $this->parser = $parser;
         $this->dumper = $dumper;
 
+        if (!is_dir(dirname($filePath))) {
+            mkdir(dirname($filePath), 0755, true);
+        }
+
         if (is_file($this->filePath)) {
             //TODO:! extract class to check file_put_contents
             $this->data = $this->parser->parse(file_get_contents($filePath));

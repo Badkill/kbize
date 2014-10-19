@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Kbize\Console\Command\KbizeCommand;
 use Kbize\KbizeKernel;
+use Kbize\KbizeKernelFactory;
 use Kbize\Console\MissingMandatoryParametersRequest;
 
 class KbizeCommandTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +17,12 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->kernel = $this->getMock('Kbize\KbizeKernel');
-        $this->sampleCommand = new SampleCommand($this->kernel);
+        $this->kernelFactory = $this->getMock('Kbize\KbizeKernelFactory');
+        $this->kernelFactory->expects($this->any())
+            ->method('forProfile')
+            ->will($this->returnValue($this->kernel))
+        ;
+        $this->sampleCommand = new SampleCommand($this->kernelFactory);
         $this->application = new Application();
         $this->application->add($this->sampleCommand);
     }
@@ -25,9 +31,14 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
     {
         $projectId = 1;
 
+        $this->kernel->expects($this->at(0))
+            ->method('isAuthenticated')
+            ->will($this->returnValue(true))
+        ;
+
         $command = $this->application->find('sample:command');
         $dialog = $command->getHelper('question');
-        $dialog->setInputStream($this->getInputStream('foo'));
+        $dialog->setInputStream($this->getInputStream("foo"));
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -75,18 +86,24 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
         $username = 'username@email.com';
         $password = 'password';
 
-        $this->kernel->expects($this->exactly(2))
-            ->method('getAllTasks')
+        $this->kernel->expects($this->at(0))
+            ->method('isAuthenticated')
+            ->will($this->returnValue(true))
         ;
 
-        $this->kernel->expects($this->at(0))
+        $this->kernel->expects($this->at(1))
             ->method('getAllTasks')
             ->will($this->throwException(new \Kbize\Exception\ForbiddenException()))
         ;
 
-        $this->kernel->expects($this->once())
+        $this->kernel->expects($this->at(2))
             ->method('authenticate')
             ->with($username, $password)
+        ;
+
+        $this->kernel->expects($this->at(3))
+            ->method('getAllTasks')
+            ->will($this->returnValue([]))
         ;
 
         $command = $this->application->find('sample:command');
@@ -113,22 +130,15 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
 
 class SampleCommand extends KbizeCommand
 {
-    public function __construct(KbizeKernel $kernel)
+    public function __construct(KbizeKernelFactory $kernel)
     {
         parent::__construct($kernel);
-
-        $this->missingParameterRequest = new MissingMandatoryParametersRequest([
-            'option' => function () {
-                return [
-                    'foo' => 'bar',
-                    'bar' => 'foo',
-                ];
-            },
-        ]);
     }
 
     protected function configure()
     {
+        parent::configure();
+
         $this->setName('sample:command')
             ->addOption(
                 'option',
@@ -139,9 +149,21 @@ class SampleCommand extends KbizeCommand
         ;
     }
 
+    protected function missingParameterRequestSetUp()
+    {
+        $this->missingParameterRequest = new MissingMandatoryParametersRequest([
+            'option' => function () {
+                return [
+                    'foo' => 'bar',
+                    'bar' => 'foo',
+                ];
+            },
+        ]);
+    }
+
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
-        $this->kernel
+        $taskCollection = $this->kernel
             ->getAllTasks(1)
         ;
     }

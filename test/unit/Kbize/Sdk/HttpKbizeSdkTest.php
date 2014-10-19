@@ -31,7 +31,7 @@ class HttpKbizeSdkTest extends \PHPUnit_Framework_TestCase
 
         $this->client->expects($this->once())
             ->method('post')
-            ->with('/login', [
+            ->with('login', [
                 'email' => $email,
                 'pass'  => $password
             ], [
@@ -75,7 +75,7 @@ class HttpKbizeSdkTest extends \PHPUnit_Framework_TestCase
 
         $this->client->expects($this->once())
             ->method('post')
-            ->with('/get_projects_and_boards', [], [
+            ->with('get_projects_and_boards', [], [
                 'Content-Type' => 'application/json',
                 'Accept'       => 'application/json',
                 'apikey'       => 'ERtVj8IJKn9jUkSyY0ml6HMK3c1N4tVZSjHSmQVy',
@@ -101,7 +101,7 @@ class HttpKbizeSdkTest extends \PHPUnit_Framework_TestCase
 
         $this->client->expects($this->once())
             ->method('post')
-            ->with('/get_all_tasks', [
+            ->with('get_all_tasks', [
                 'boardid' => $boardId,
             ], [
                 'Content-Type' => 'application/json',
