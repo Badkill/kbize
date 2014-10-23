@@ -15,7 +15,7 @@ before_script:
     - composer require symfony/finder:${SYMFONY_VERSION}
     - composer require symfony/yaml:${SYMFONY_VERSION}
     - composer require symfony/process:${SYMFONY_VERSION}
-    - composer require guzzlehttp/guzzle:~4.0
+    - composer require guzzlehttp/guzzle:4.0
 script: phpunit --coverage-text
 notifications:
     email:
