@@ -6,15 +6,15 @@ env:
     - SYMFONY_VERSION=2.5.*
     - SYMFONY_VERSION=dev-master
 before_script:
-    - composer require symfony/console:${SYMFONY_VERSION}
-    - composer require symfony/dependency-injection:${SYMFONY_VERSION}
-    - composer require symfony/options-resolver:${SYMFONY_VERSION}
-    - composer require symfony/filesystem:${SYMFONY_VERSION}
-    - composer require symfony/config:${SYMFONY_VERSION}
-    - composer require symfony/finder:${SYMFONY_VERSION}
-    - composer require symfony/yaml:${SYMFONY_VERSION}
-    - composer require symfony/process:${SYMFONY_VERSION}
-    - composer require guzzlehttp/guzzle:4.0
+    # - composer require symfony/console:${SYMFONY_VERSION}
+    # - composer require symfony/dependency-injection:${SYMFONY_VERSION}
+    # - composer require symfony/options-resolver:${SYMFONY_VERSION}
+    # - composer require symfony/filesystem:${SYMFONY_VERSION}
+    # - composer require symfony/config:${SYMFONY_VERSION}
+    # - composer require symfony/finder:${SYMFONY_VERSION}
+    # - composer require symfony/yaml:${SYMFONY_VERSION}
+    # - composer require symfony/process:${SYMFONY_VERSION}
+    # - composer require guzzlehttp/guzzle:4.0
 script: phpunit --coverage-text
 notifications:
     email:
