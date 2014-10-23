@@ -28,13 +28,6 @@ abstract class KbizeCommand extends Command
     protected function configure()
     {
         $this
-            /* ->addOption( */
-            /*     'env', */
-            /*     'e', */
-            /*     InputOption::VALUE_OPTIONAL, */
-            /*     'set the environment for different configuration', */
-            /*     'prod' */
-            /* ) */
             ->addOption(
                 'project',
                 'p',
@@ -68,9 +61,9 @@ abstract class KbizeCommand extends Command
         $this->missingParameterRequest = new MissingMandatoryParametersRequest([
             'project' => function () {
                 $projects = [];
-                /* foreach($this->kernel->getProjects() as $project) { */
-                /*     $projects[$project['id']] = $project['name']; */
-                /* } */
+                foreach($this->kernel->getProjects() as $project) {
+                    $projects[$project['id']] = $project['name'];
+                }
 
                 return $projects;
             },

@@ -13,9 +13,13 @@ use Symfony\Component\Yaml\Dumper;
 
 class KbizeKernelFactory
 {
-    public function __construct()
+    public function __construct($profileBasePath = null)
     {
-        $this->settingsBasePath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.kbize';
+        if (!$profileBasePath) {
+            $this->profileBasePath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.kbize';
+        } else {
+            $this->profileBasePath = $profileBasePath;
+        }
     }
 
     public function forProfile($profile)
@@ -35,7 +39,7 @@ class KbizeKernelFactory
             ),
             new StateUser(
                 new FilesystemConfigRepository(
-                    $this->filePath($profile, 'user.yml'),
+                    $this->filePath($profile, StateUser::CONFIG_REPOSITORY_NAME),
                     new Parser(),
                     new Dumper()
                 )
@@ -56,6 +60,6 @@ class KbizeKernelFactory
 
     private function filePath($profile, $file)
     {
-        return $this->settingsBasePath . DIRECTORY_SEPARATOR . $profile . DIRECTORY_SEPARATOR. $file;
+        return $this->profileBasePath . DIRECTORY_SEPARATOR . $profile . DIRECTORY_SEPARATOR. $file;
     }
 }

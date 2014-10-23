@@ -4,6 +4,8 @@ use Kbize\Config\ConfigRepository;
 
 class StateUser implements User
 {
+    const CONFIG_REPOSITORY_NAME = 'user.yml';
+
     private $configRepository;
     private $data;
 
@@ -44,6 +46,11 @@ class StateUser implements User
         }
 
         return null;
+    }
+
+    public function toArray()
+    {
+        return $this->data;
     }
 
     private function replaceData(array $userData)
