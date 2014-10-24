@@ -6,6 +6,7 @@ env:
     - SYMFONY_VERSION=2.5.*
     - SYMFONY_VERSION=dev-master
 before_script:
+    - composer install
     # - composer require symfony/console:${SYMFONY_VERSION}
     # - composer require symfony/dependency-injection:${SYMFONY_VERSION}
     # - composer require symfony/options-resolver:${SYMFONY_VERSION}
