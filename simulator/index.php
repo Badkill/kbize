@@ -65,7 +65,7 @@ $app->post('/get_all_tasks', function (Request $request) use ($app) {
     }
 
     $yamlParser = new Parser();
-    $tasks = $yamlParser->parse(file_get_contents('../fixtures/tasks.yml'));
+    $tasks = $yamlParser->parse(file_get_contents('fixtures/tasks.yml'));
 
     if (is_file($createdTaskFile = sys_get_temp_dir() . '/kbizeCliTmpData/newTaskTest')) {
         $newTasks = $yamlParser->parse(file_get_contents($createdTaskFile));
@@ -86,7 +86,7 @@ $app->post('/get_full_board_structure', function (Request $request) use ($app) {
     }
 
     $yamlParser = new Parser();
-    $tasks = $yamlParser->parse(file_get_contents('../fixtures/fullBoardStructure.yml'));
+    $tasks = $yamlParser->parse(file_get_contents('fixtures/fullBoardStructure.yml'));
 
     return $app->json($tasks, 200);
 });
@@ -100,7 +100,7 @@ $app->post('/get_board_settings', function (Request $request) use ($app) {
     }
 
     $yamlParser = new Parser();
-    $tasks = $yamlParser->parse(file_get_contents('../fixtures/boardSettings.yml'));
+    $tasks = $yamlParser->parse(file_get_contents('fixtures/boardSettings.yml'));
 
     return $app->json($tasks, 200);
 });
