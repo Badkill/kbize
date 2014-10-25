@@ -30,7 +30,13 @@ abstract class MatcherStrategy
                 }
             }
 
-            if (strpos(strtolower($fieldValue), strtolower($keyValueFilter['value'])) !== false) {
+            $stringMatcherClass = 'partial' == $keyValueFilter['type'] ?
+                'Kbize\Collection\Matcher\StringPartialMatcher' :
+                'Kbize\Collection\Matcher\StringExactMatcher'
+            ;
+
+            $stringMatcher = new $stringMatcherClass(strtolower($fieldValue));
+            if ($stringMatcher->match(strtolower($keyValueFilter['value']))) {
                 return true;
             }
         }
@@ -38,26 +44,30 @@ abstract class MatcherStrategy
 
     private function keyValueFilter($filter)
     {
-        if (($pos = strpos($filter, '=')) !== false) {
+        if (($pos = strpos($filter, '=')) != false) { //priority=high
             return [
                 'key' => substr($filter, 0, $pos),
-                'value' => substr($filter, $pos + 1)
+                'value' => substr($filter, $pos + 1),
+                'type' => 'partial',
             ];
-        } elseif (0 === strpos($filter, '#')) {
+        } elseif (0 === strpos($filter, '=')) { // =27
             return [
                 'key' => 'taskid',
-                'value' => substr($filter, 1)
+                'value' => substr($filter, 1),
+                'type' => 'exact',
             ];
-        } elseif (0 === strpos($filter, '@')) {
+        } elseif (0 === strpos($filter, '@')) { // @name.surname
             return [
                 'key' => 'assignee',
-                'value' => substr($filter, 1)
+                'value' => substr($filter, 1),
+                'type' => 'partial',
             ];
         }
 
         return [
             'key' => null,
-            'value' => $filter
+            'value' => $filter,
+            'type' => 'partial',
         ];
     }
 }
