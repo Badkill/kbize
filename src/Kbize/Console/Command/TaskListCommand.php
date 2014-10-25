@@ -23,6 +23,7 @@ class TaskListCommand extends KbizeCommand
 
         $this
             ->setName('task:list')
+            ->setAliases(['task-list', 'tasklist'])
             ->setDescription('List tasks of a specifc project and board')
             ->addOption(
                 'short',

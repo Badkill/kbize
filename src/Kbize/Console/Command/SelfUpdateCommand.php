@@ -15,6 +15,7 @@ class SelfUpdateCommand extends Command
     {
         $this
             ->setName('self:update')
+            ->setAliases(['selfupdate', 'self-update'])
             ->setDescription('Updates kbize.phar to the latest version')
         ;
     }
