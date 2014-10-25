@@ -18,11 +18,15 @@ abstract class KbizeCommand extends Command
 {
     protected $kernel;
     protected $kernelFactory;
+    protected $settings;
 
-    public function __construct(KbizeKernelFactory $kernelFactory)
+    public function __construct(KbizeKernelFactory $kernelFactory, array $settings = [])
     {
         parent::__construct();
         $this->kernelFactory = $kernelFactory;
+        $this->settings      = array_merge([
+            'env' => 'prod'
+        ], $settings);
     }
 
     protected function configure()
@@ -132,9 +136,11 @@ abstract class KbizeCommand extends Command
         $username = $helper->ask($input, $output, $question);
 
         $question = new Question('Insert your password: ');
-        //FIXME:! it brokes behat with cli
-        /* $question->setHidden(true); */
-        /* $question->setHiddenFallback(false); */
+        if ('test' !== $this->settings['env']) {
+            //FIXME:! it brokes behat with cli
+            $question->setHidden(true);
+            $question->setHiddenFallback(false);
+        }
         $password = $helper->ask($input, $output, $question);
 
         $this->kernel->authenticate($username, $password);

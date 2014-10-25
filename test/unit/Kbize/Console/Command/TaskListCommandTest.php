@@ -14,11 +14,7 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->kernel = $this->getMock('Kbize\KbizeKernel');
-        $this->kernelFactory = $this->getMock('Kbize\KbizeKernelFactory');
-        $this->kernelFactory->expects($this->any())
-            ->method('forProfile')
-            ->will($this->returnValue($this->kernel))
-        ;
+        $this->kernelFactoryReturns($this->kernel);
         $this->taskList = new TaskListCommand($this->kernelFactory);
         $this->application = new Application();
         $this->application->add($this->taskList);
@@ -86,5 +82,18 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         rewind($stream);
 
         return $stream;
+    }
+
+    private function kernelFactoryReturns($kernel)
+    {
+        $this->kernelFactory = $this->getMockBuilder('Kbize\KbizeKernelFactory')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->kernelFactory->expects($this->any())
+            ->method('forProfile')
+            ->will($this->returnValue($kernel))
+        ;
     }
 }

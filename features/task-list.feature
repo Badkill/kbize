@@ -45,7 +45,9 @@ Feature: task:list
         And I want to launch "task:list" command
         And I use the "show" option
         And I use the "board" option with value "2"
-        And I use the "filters" argument "API"
+        And I use the "filters" argument "Merchant API"
         When command is executed
-        Then the output contains "API"
-        Then the output does not contains "Story Title"
+        Then the output contains "Merchant API"
+        Then the output contains "description"
+        Then the output contains "type"
+        # Then show the output

@@ -81,7 +81,7 @@ class CliCommandTester
      */
     public function getInput()
     {
-        return $this->input;
+        return $this->process->getInput();
     }
 
     /**

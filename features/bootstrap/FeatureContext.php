@@ -43,11 +43,11 @@ class FeatureContext extends BehatContext
         $this->profilePath = $this->profileBasePath . DIRECTORY_SEPARATOR . $this->profile;
         $this->initializeSettings();
 
-        $this->taskList = new TaskListCommand(new KbizeKernelFactory(
-            $this->profileBasePath
-        ));
-        $this->application = new Application();
-        $this->application->add($this->taskList);
+        /* $this->taskList = new TaskListCommand(new KbizeKernelFactory( */
+        /*     $this->profileBasePath */
+        /* )); */
+        /* $this->application = new Application(); */
+        /* $this->application->add($this->taskList); */
 
         $this->userInputs = [];
         $this->options = [
@@ -87,6 +87,7 @@ class FeatureContext extends BehatContext
         /* $this->commandTester = new CommandTester($this->command); */
         $this->commandTester = new CliCommandTester($command, [
             'KBIZE_PROFILE_PATH' => $this->profileBasePath,
+            'KBIZE_ENV' => 'test',
         ]);
     }
 
@@ -130,26 +131,33 @@ class FeatureContext extends BehatContext
             );
         }
 
-        /* $this->commandTester->execute(array_merge($this->options, [ */
-        /*     'command' => $this->command->getName(), */
-        /* ])); */
-
-        /* $inputStream = $this->setupUserInputs(); */
-
-        /* try { */
-        /*     $this->commandTester->execute(array_merge($this->options, [ */
-        /*         'command' => $this->command->getName(), */
-        /*     ])); */
-
-        /*     $this->output = $this->commandTester->getDisplay(); */
-        /* } catch (RuntimeException $e) { */
-        /*     throw new RuntimeException("Missing input data\nCommand output is: \n" . */
-        /*         $this->commandTester->getDisplay() */
-        /*     ); */
-        /* } */
-
+        //FIXME:! Should be check that no more data is present on input stream!
         /* $this->ensureNoMoreInputsData($inputStream); */
+
+
     }
+    /* public function commandIsExecuted() */
+    /* { */
+    /*     $this->commandTester->execute(array_merge($this->options, [ */
+    /*         'command' => $this->command->getName(), */
+    /*     ])); */
+
+    /*     $inputStream = $this->setupUserInputs(); */
+
+    /*     try { */
+    /*         $this->commandTester->execute(array_merge($this->options, [ */
+    /*             'command' => $this->command->getName(), */
+    /*         ])); */
+
+    /*         $this->output = $this->commandTester->getDisplay(); */
+    /*     } catch (RuntimeException $e) { */
+    /*         throw new RuntimeException("Missing input data\nCommand output is: \n" . */
+    /*             $this->commandTester->getDisplay() */
+    /*         ); */
+    /*     } */
+
+    /*     $this->ensureNoMoreInputsData($inputStream); */
+    /* } */
 
     /**
      * @Given /^I have an expired token$/
@@ -207,8 +215,15 @@ class FeatureContext extends BehatContext
      */
     public function theOutputDoesNotContains($wantedOutput)
     {
-        $output = $this->commandTester->getDisplay();
-        assertNotRegexp("/$wantedOutput/", $output);
+        assertNotRegexp("/$wantedOutput/", $this->output);
+    }
+
+    /**
+     * @Then /^show the output$/
+     */
+    public function showTheOutput()
+    {
+        echo $this->output;
     }
 
     private function initializeSettings()
@@ -240,14 +255,14 @@ class FeatureContext extends BehatContext
         return $this->user;
     }
 
-    private function setUpUserInputs()
-    {
-        $dialog = $this->command->getHelper('question');
-        $inputStream = $this->getInputStream(implode("\n", $this->userInputs));
-        $dialog->setInputStream($inputStream);
+    /* private function setUpUserInputs() */
+    /* { */
+    /*     $dialog = $this->command->getHelper('question'); */
+    /*     $inputStream = $this->getInputStream(implode("\n", $this->userInputs)); */
+    /*     $dialog->setInputStream($inputStream); */
 
-        return $inputStream;
-    }
+    /*     return $inputStream; */
+    /* } */
 
     private function ensureNoMoreInputsData($inputStream)
     {
@@ -268,14 +283,14 @@ class FeatureContext extends BehatContext
         }
     }
 
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        stream_set_blocking($stream, 0);
-        stream_set_timeout($stream, 1);
-        fputs($stream, $input);
-        rewind($stream);
+    /* protected function getInputStream($input) */
+    /* { */
+    /*     $stream = fopen('php://memory', 'r+', false); */
+    /*     stream_set_blocking($stream, 0); */
+    /*     stream_set_timeout($stream, 1); */
+    /*     fputs($stream, $input); */
+    /*     rewind($stream); */
 
-        return $stream;
-    }
+    /*     return $stream; */
+    /* } */
 }

@@ -13,17 +13,9 @@ use Symfony\Component\Yaml\Dumper;
 
 class KbizeKernelFactory
 {
-    public function __construct($profileBasePath = null)
+    public function __construct($profileBasePath)
     {
-        if (!$profileBasePath) {
-            if (isset($_SERVER['KBIZE_PROFILE_PATH'])) {
-                $this->profileBasePath = $_SERVER['KBIZE_PROFILE_PATH'];
-            } else {
-                $this->profileBasePath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.kbize';
-            }
-        } else {
-            $this->profileBasePath = $profileBasePath;
-        }
+        $this->profileBasePath = $profileBasePath;
     }
 
     public function forProfile($profile)
