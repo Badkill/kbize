@@ -47,12 +47,18 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testDelegateRenderToTaskListOutputObject()
     {
-        $this->markTestSkipped();
+        $this->markTestSkipped(
+            'The object TaskListOutput is not injected but created on the fly,
+            so it is difficult to test it.'
+        );
     }
 
     public function testDelegateRenderToTaskShowOutputObjectIfShowOptionIsSetted()
     {
-        $this->markTestSkipped();
+        $this->markTestSkipped(
+            'The object TaskShowOutput is not injected but created on the fly,
+            so it is difficult to test it.'
+        );
     }
 
     private function simpleTaskCollection($filters = [])
