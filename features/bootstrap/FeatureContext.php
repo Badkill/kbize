@@ -16,6 +16,7 @@ use Kbize\KbizeKernelFactory;
 use Kbize\Settings\SettingsWrapper;
 use Kbize\Config\FilesystemConfigRepository;
 use Kbize\StateUser;
+use Kbize\Integration\Tester\CliCommandTester;
 
 //
 // Require 3rd-party libraries here:
@@ -49,6 +50,9 @@ class FeatureContext extends BehatContext
         $this->application->add($this->taskList);
 
         $this->userInputs = [];
+        $this->options = [
+            '--profile' => 'behat',
+        ];
     }
 
     /**
@@ -75,43 +79,76 @@ class FeatureContext extends BehatContext
     }
 
     /**
-     * @When /^I want to view projects list$/
+     * @When /^I want to launch "([^"]*)" command$/
      */
-    public function iWantToViewTaskList()
+    public function iWantToViewTaskList($command)
     {
-        $this->command = $this->application->find('task:list');
-        $this->commandTester = new CommandTester($this->command);
+        /* $this->command = $this->application->find('task:list'); */
+        /* $this->commandTester = new CommandTester($this->command); */
+        $this->commandTester = new CliCommandTester($command, [
+            'KBIZE_PROFILE_PATH' => $this->profileBasePath,
+        ]);
     }
 
     /**
-     * @Given /^I write "([^"]*)"$/
-     * @Given /^I write [^:]*: "([^"]*)"$/
+     * @Given /^I use the "([^"]*)" argument "([^"]*)"$/
      */
-    public function iWrite($userInput)
+    public function iUseTheArgument($argumentName, $argumentValue)
+    {
+        $this->options[$argumentName] = $argumentValue;
+    }
+
+    /**
+     * @Given /^I insert[^"]* "([^"]*)" as.* input$/
+     */
+    public function iInsertInput($userInput)
     {
         $this->userInputs[] = $userInput;
     }
+
+    /**
+     * @Given /^I use the "([^"]*)" option with value "([^"]*)"$/
+     * @Given /^I use the "([^"]*)" option$/
+     */
+    public function iUseTheOptionWithValue($optionName, $optionValue = '')
+    {
+        $this->options['--' . $optionName] = $optionValue;
+    }
+
 
     /**
      * @Then /^command is executed$/
      */
     public function commandIsExecuted()
     {
-        $inputStream = $this->setupUserInputs();
-
         try {
-            $this->commandTester->execute([
-                'command' => $this->command->getName(),
-                '--profile' => 'behat',
-                '--board' => '2',
-            ]);
+            $this->commandTester->execute($this->userInputs, $this->options);
+            $this->output = $this->commandTester->getDisplay();
         } catch (RuntimeException $e) {
             throw new RuntimeException("Missing input data\nCommand output is: \n" .
                 $this->commandTester->getDisplay()
             );
         }
 
-        $this->ensureNoMoreInputsData($inputStream);
+        /* $this->commandTester->execute(array_merge($this->options, [ */
+        /*     'command' => $this->command->getName(), */
+        /* ])); */
+
+        /* $inputStream = $this->setupUserInputs(); */
+
+        /* try { */
+        /*     $this->commandTester->execute(array_merge($this->options, [ */
+        /*         'command' => $this->command->getName(), */
+        /*     ])); */
+
+        /*     $this->output = $this->commandTester->getDisplay(); */
+        /* } catch (RuntimeException $e) { */
+        /*     throw new RuntimeException("Missing input data\nCommand output is: \n" . */
+        /*         $this->commandTester->getDisplay() */
+        /*     ); */
+        /* } */
+
+        /* $this->ensureNoMoreInputsData($inputStream); */
     }
 
     /**
@@ -138,6 +175,40 @@ class FeatureContext extends BehatContext
         );
 
         assertArrayHasKey('apikey', $config->toArray(), var_export($config->toArray(), true));
+        assertNotEquals('expired', $config->toArray()['apikey'], 'the api key is not updated');
+    }
+
+    /**
+     * @Then /^no more inputs are requested$/
+     */
+    public function noInputsAreRequested()
+    {
+        //FIXME:!
+    }
+
+    /**
+     * @Given /^the story "([^"]*)" of "([^"]*)" exists$/
+     */
+    public function theStoryTitleOfUserExists($title, $assignee)
+    {
+        //FIXME:! to be implemented
+    }
+
+    /**
+     * @Then /^the output contains "([^"]*)"$/
+     */
+    public function theOutputContains($wantedOutput)
+    {
+        assertRegexp("/$wantedOutput/", $this->output);
+    }
+
+    /**
+     * @Then /^the output does not contains "([^"]*)"$/
+     */
+    public function theOutputDoesNotContains($wantedOutput)
+    {
+        $output = $this->commandTester->getDisplay();
+        assertNotRegexp("/$wantedOutput/", $output);
     }
 
     private function initializeSettings()
@@ -200,6 +271,8 @@ class FeatureContext extends BehatContext
     protected function getInputStream($input)
     {
         $stream = fopen('php://memory', 'r+', false);
+        stream_set_blocking($stream, 0);
+        stream_set_timeout($stream, 1);
         fputs($stream, $input);
         rewind($stream);
 

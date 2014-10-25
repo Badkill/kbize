@@ -16,7 +16,11 @@ class KbizeKernelFactory
     public function __construct($profileBasePath = null)
     {
         if (!$profileBasePath) {
-            $this->profileBasePath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.kbize';
+            if (isset($_SERVER['KBIZE_PROFILE_PATH'])) {
+                $this->profileBasePath = $_SERVER['KBIZE_PROFILE_PATH'];
+            } else {
+                $this->profileBasePath = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . '.kbize';
+            }
         } else {
             $this->profileBasePath = $profileBasePath;
         }

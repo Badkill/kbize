@@ -4,23 +4,26 @@ Feature: Login
 
     Scenario: Successfull authentication with email and password
         Given I am an unauthenticated user
-        When I want to view projects list
-        And I write my email: "name.surname@email.com"
-        And I write my password: "secret"
-        Then command is executed
+        And I want to launch "task:list" command
+        And I insert my email "name.surname@email.com" as input
+        And I insert my password "secret" as input
+        And I insert "2" as input
+        When command is executed
         Then my token is stored
 
-    Scenario: User and password are not request with an already authenticated user
+    Scenario: User and password are not requested for an already authenticated user
         Given I am an authenticated user
-        When I want to view projects list
-        Then command is executed
+        And I want to launch "task:list" command
+        And I insert "2" as input
+        When command is executed
+        Then no more inputs are requested
 
     Scenario: User and password are requested with an already authenticated user with wrong token
         Given I am an authenticated user
         And I have an expired token
-        When I want to view projects list
-        And I write my email: "name.surname@email.com"
-        And I write my password: "secret"
-        Then command is executed
+        And I want to launch "task:list" command
+        And I insert my email "name.surname@email.com" as input
+        And I insert my password "secret" as input
+        And I insert "2" as input
+        When command is executed
         Then my token is stored
-

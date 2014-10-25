@@ -25,17 +25,17 @@ class MissingMandatoryParametersRequest
             if (!$input->getOption($mandatoryParam)) {
                 $availableValues = call_user_func($availableValuesCallback, $input);
                 if (0 === count($availableValues)) {
-                    return;
+                    continue;
                 }
 
                 if (1 === count($availableValues)) {
                     $value = key($availableValues);
                 } else {
-                    $question = new ChoiceQuestion(
+                    $question = (new ChoiceQuestion(
                         "Choose a $mandatoryParam",
                         $availableValues,
                         array_keys($availableValues)[0]
-                    );
+                    ))->setMaxAttempts(5);
 
                     $question->setErrorMessage("The $mandatoryParam `%s` is not valid.");
 

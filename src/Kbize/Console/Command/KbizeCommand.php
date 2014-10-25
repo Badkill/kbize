@@ -80,9 +80,12 @@ abstract class KbizeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        //FIXME:! it needed only for behat!
+        $input->setInteractive(true);
         for ($i = 0; $i < 5; $i++) {
             try {
                 $this->kernel = $this->kernelFactory->forProfile($input->getOption('profile'));
+                break;
             } catch (MissingSettingsException $e) {
                 $settingsWrapper = $e->settingsWrapper();
                 $settingsWrapper->add($this->enrichSettings($input, $output));
@@ -117,18 +120,21 @@ abstract class KbizeCommand extends Command
         $helper = $this->getHelper('question');
 
         $question = new Question('Insert your login email: ');
+
         $question->setValidator(function ($email) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 throw new \RuntimeException("`$email` is not a valid email address");
             }
             return $email;
         });
+
         $question->setMaxAttempts(3);
         $username = $helper->ask($input, $output, $question);
 
         $question = new Question('Insert your password: ');
-        $question->setHidden(true);
-        $question->setHiddenFallback(false);
+        //FIXME:! it brokes behat with cli
+        /* $question->setHidden(true); */
+        /* $question->setHiddenFallback(false); */
         $password = $helper->ask($input, $output, $question);
 
         $this->kernel->authenticate($username, $password);

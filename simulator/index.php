@@ -60,6 +60,7 @@ $app->post('/get_all_tasks', function (Request $request) use ($app) {
     ensureApiKeyIsRight($request->headers->get('apikey'), $app);
 
     $inputs = json_decode($request->getContent(), true);
+
     if ($inputs['boardid'] != '2') {
         return new Response('Board ' . $inputs['boardid'] . ' doesn\'t exists', 400);
     }

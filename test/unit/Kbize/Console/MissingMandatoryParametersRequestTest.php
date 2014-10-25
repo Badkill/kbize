@@ -23,6 +23,7 @@ class MissingMandatoryParametersRequestTest extends \PHPUnit_Framework_TestCase
 
         $question = (new ChoiceQuestion('Choose a first', $availableValues, 'key1'))
             ->setErrorMessage('The first `%s` is not valid.')
+            ->setMaxAttempts(5)
         ;
 
         $this->questionHelper->expects($this->once())
