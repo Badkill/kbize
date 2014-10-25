@@ -3,6 +3,7 @@ namespace Kbize;
 
 use Symfony\Component\Console\Application;
 use Kbize\Console\Command\TaskListCommand;
+use Kbize\Console\Command\SelfUpdateCommand;
 use Kbize\Console\Helper\AlternateTableHelper;
 /* use KbizeCli\Console\Helper\TableWithRowTitleHelper; */
 
@@ -10,7 +11,7 @@ $loader = require __DIR__ . '/vendor/autoload.php';
 
 $settings = settings();
 
-$application = new Application('Prova');
+$application = new Application('Kanbanize shell client', '@git-version@');
 
 $helperSet = $application->getHelperSet();
 $helperSet->set(new AlternateTableHelper());
@@ -22,6 +23,7 @@ $application->add(new TaskListCommand(
     new KbizeKernelFactory($settings['profile_path']),
     $settings
 ));
+$application->add(new SelfUpdateCommand());
 $application->run();
 
 function settings()

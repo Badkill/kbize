@@ -1,12 +1,17 @@
 {
     "chmod": "0755",
+    "compactors": [
+        "Herrera\\Box\\Compactor\\Json",
+        "Herrera\\Box\\Compactor\\Php"
+    ],
     "directories": [
         "src/",
         "vendor/composer"
     ],
-    "extract": true,
+    "extract": false,
     "files": [
-        "vendor/autoload.php"
+        "vendor/autoload.php",
+        "vendor/herrera-io/phar-update/res/schema.json"
     ],
     "finder": [{
         "name": "*.php",
@@ -38,7 +43,8 @@
             "vendor/symfony/config",
             "vendor/symfony/console",
             "vendor/symfony/filesystem",
-            "vendor/symfony/yaml"
+            "vendor/symfony/yaml",
+            "vendor/herrera-io"
         ]
     }],
     "git-commit": "git-commit",
