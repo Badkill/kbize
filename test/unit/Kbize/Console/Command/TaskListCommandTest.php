@@ -7,6 +7,7 @@ use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
 
 use Kbize\Console\Command\TaskListCommand;
+use Kbize\Console\Helper\AlternateTableHelper;
 use Kbize\Collection\Tasks;
 
 class TaskListCommandTest extends \PHPUnit_Framework_TestCase
@@ -17,6 +18,8 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         $this->kernelFactoryReturns($this->kernel);
         $this->taskList = new TaskListCommand($this->kernelFactory);
         $this->application = new Application();
+        $helperSet = $this->application->getHelperSet();
+        $helperSet->set(new AlternateTableHelper());
         $this->application->add($this->taskList);
     }
 
@@ -43,6 +46,33 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
             '--project' => $projectId,
             '--board' => $boardId,
         ]);
+    }
+
+    public function testIfLastFilterIsTheWordShowItIsRemovedFromTheFiltersAndShowOptionIsEnabled()
+    {
+        $projectId = 1;
+        $boardId = 2;
+        $filters = ['foo', 'show'];
+
+        $this->kernel->expects($this->once())
+            ->method('getAllTasks')
+            ->with($boardId)
+            ->will($this->returnValue($this->simpleTaskCollection(['foo'])));
+        ;
+
+        $command = $this->application->find('task:list');
+        $dialog = $command->getHelper('question');
+        $dialog->setInputStream($this->getInputStream("http://www.exaple.url\nemail@email.com\npassword"));
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            'filters' => $filters,
+            '--project' => $projectId,
+            '--board' => $boardId,
+        ]);
+
+        $this->assertTrue($commandTester->getInput()->getOption('show'));
     }
 
     public function testDelegateRenderToTaskListOutputObject()

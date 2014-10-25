@@ -58,9 +58,11 @@ class TaskListCommand extends KbizeCommand
 
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
+        $filters = $this->parseFilters($input);
+
         $taskCollection = $this->kernel
             ->getAllTasks($input->getOption('board'))
-            ->filter($input->getArgument('filters'))
+            ->filter($filters)
         ;
 
         if ($input->getOption('show')) {
@@ -70,5 +72,17 @@ class TaskListCommand extends KbizeCommand
             $taskListOutput = new TaskListOutput($output, $this->getHelper('table'));
             $taskListOutput->render($taskCollection);
         }
+    }
+
+    private function parseFilters(InputInterface $input)
+    {
+        $filters = $input->getArgument('filters');
+        $nFilters = count($filters);
+        if ($filters && 'show' == $filters[$nFilters - 1]) {
+            array_pop($filters);
+            $input->setOption('show', true);
+        }
+
+        return $filters;
     }
 }
