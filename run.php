@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 namespace Kbize;
 
@@ -7,7 +6,6 @@ use Kbize\Console\Command\TaskListCommand;
 use Kbize\Console\Helper\AlternateTableHelper;
 /* use KbizeCli\Console\Helper\TableWithRowTitleHelper; */
 
-/* // the autoloader */
 $loader = require __DIR__ . '/vendor/autoload.php';
 
 $settings = settings();
