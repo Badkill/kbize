@@ -44,7 +44,10 @@
             "vendor/symfony/console",
             "vendor/symfony/filesystem",
             "vendor/symfony/yaml",
-            "vendor/herrera-io"
+            "vendor/herrera-io",
+            "vendor/seld/jsonlint",
+            "vendor/justinrainbow/json-schema",
+            "vendor/kherge/version"
         ]
     }],
     "git-commit": "git-commit",
