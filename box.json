@@ -1,0 +1,52 @@
+{
+    "chmod": "0755",
+    "directories": [
+        "src/",
+        "vendor/composer"
+    ],
+    "extract": true,
+    "files": [
+        "vendor/autoload.php"
+    ],
+    "finder": [{
+        "name": "*.php",
+        "exclude": [
+            "behat",
+            "mikey179",
+            "Net",
+            "phpunit",
+            "phpunit-test-case",
+            "Tester",
+            "silex",
+            "yaml",
+            "tests",
+            "Tests",
+            "Tester",
+            "symfony/debug",
+            "symfony/event-dispatcher",
+            "symfony/dependency-injection",
+            "symfony/finder",
+            "symfony/http-foundation",
+            "symfony/http-kernel",
+            "symfony/options-resolver",
+            "symfony/process",
+            "symfony/routing",
+            "symfony/translation"
+        ],
+        "in": [
+            "vendor/guzzlehttp",
+            "vendor/symfony/config",
+            "vendor/symfony/console",
+            "vendor/symfony/filesystem",
+            "vendor/symfony/yaml"
+        ]
+    }],
+    "git-commit": "git-commit",
+    "git-version": "git-version",
+    "main": "kbize.php",
+    "output": "kbize.phar",
+    "replacements": {
+        "manifest_url": "http://box-project.org/manifest.json"
+    },
+    "stub": true
+}

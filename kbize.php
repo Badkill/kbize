@@ -10,7 +10,7 @@ $loader = require __DIR__ . '/vendor/autoload.php';
 
 $settings = settings();
 
-$application = new Application();
+$application = new Application('Prova');
 
 $helperSet = $application->getHelperSet();
 $helperSet->set(new AlternateTableHelper());
