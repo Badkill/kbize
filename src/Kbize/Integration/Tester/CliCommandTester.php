@@ -31,7 +31,7 @@ class CliCommandTester
      */
     public function execute(array $input = array(), array $options = array())
     {
-        $commandLine = "php run.php $this->command";
+        $commandLine = "php kbize.php $this->command";
 
         foreach ($options as $option => $value) {
             if ('-' == substr($option, 0, 1)) {
