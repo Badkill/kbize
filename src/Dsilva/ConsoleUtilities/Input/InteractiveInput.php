@@ -1,19 +1,17 @@
 <?php
-
 namespace Dsilva\ConsoleUtilities\Input;
 
+use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 use Symfony\Component\Console\Input\Input;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 
 /**
  * @inheritdoc
  *
- * @author Danilo Silva <badkill82@gmail.com>
+ * @author Danilo Silva <silva.danilo82@gmail.com>
  */
 class InteractiveInput implements InputInterface
 {
@@ -25,11 +23,20 @@ class InteractiveInput implements InputInterface
     public function __construct(InputInterface $input, OutputInterface $output, QuestionHelper $helper)
     {
         $this->input  = $input;
-        $this->output = $output;
         $this->helper = $helper;
-        $this->optionEnricher = new OptionsEnricher($this, $this->output, $this->helper);
+        $this->optionEnricher = new OptionsEnricher($this, $output, $helper);
     }
 
+    /**
+     * Returns the option value for a given option name.
+     * If value is not setted and the option is lazy, ask to the user interactively
+     *
+     * @param string $name The option name
+     *
+     * @return mixed The option value
+     *
+     * @throws \InvalidArgumentException When option given doesn't exist
+     */
     public function getOption($name)
     {
         $value = $this->input->getOption($name);
@@ -38,7 +45,7 @@ class InteractiveInput implements InputInterface
         }
 
         $option = $this->definition->getOption($name);
-        if ($option instanceof LazyInputOption && $option->isMandatory()) {
+        if ($option instanceof LazyInputOption && $option->isLazy()) {
             return $this->optionEnricher->enrich($option->getName(), $option->availableValues($this));
         }
 
@@ -94,46 +101,73 @@ class InteractiveInput implements InputInterface
         return $this->input->validate();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getArguments()
     {
         return $this->input->getArguments();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getArgument($name)
     {
         return $this->input->getArgument($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setArgument($name, $value)
     {
-        return $this->input->setArguments($name, $value);
+        return $this->input->setArgument($name, $value);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function hasArgument($name)
     {
-        return $this->input->setArguments($name, $value);
+        return $this->input->hasArgument($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getOptions()
     {
         return $this->input->getOptions();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setOption($name, $value)
     {
         return $this->input->setOption($name, $value);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function hasOption($name)
     {
         return $this->input->hasOption($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function isInteractive()
     {
         return $this->input->isInteractive();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setInteractive($interactive)
     {
         return $this->input->setInteractive($interactive);

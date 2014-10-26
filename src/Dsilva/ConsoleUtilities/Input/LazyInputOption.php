@@ -12,7 +12,7 @@ class LazyInputOption extends InputOption
     const OPTION_IS_LAZY = 16;
 
     private $inputOption;
-    private $isMandatory = false;
+    private $isLazy = false;
     private $lazyValue;
 
     public function __construct($name, $shortcut = null, $mode = null, $description = '', $default = null, $lazyValue = null)
@@ -21,9 +21,9 @@ class LazyInputOption extends InputOption
         $this->lazyValue = $lazyValue;
     }
 
-    public function isMandatory()
+    public function isLazy()
     {
-        return $this->isMandatory;
+        return $this->isLazy;
     }
 
     public function availableValues(InputInterface $input)
@@ -47,7 +47,7 @@ class LazyInputOption extends InputOption
             return $mode;
         }
 
-        $this->isMandatory = true;
+        $this->isLazy = true;
 
         return $mode ^ self::OPTION_IS_LAZY;
     }

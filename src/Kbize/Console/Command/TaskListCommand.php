@@ -26,12 +26,6 @@ class TaskListCommand extends KbizeCommand
             ->setAliases(['task-list', 'tasklist'])
             ->setDescription('List tasks of a specifc project and board')
             ->addOption(
-                'prova',
-                '',
-                InputOption::VALUE_REQUIRED,
-                'bo'
-            )
-            ->addOption(
                 'short',
                 '',
                 InputOption::VALUE_NONE,

@@ -1,17 +1,12 @@
 <?php
 namespace Dsilva\ConsoleUtilities\Tests\Input;
 
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\Console\Output\OutputInterface;
-use Dsilva\ConsoleUtilities\Command\MandatoryOptionsCommand;
 use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 
 class LazyInputOptionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCreationWithMandatoryModeDontCauseAnError()
+    public function testCreationWithLazyModeDontCauseAnError()
     {
         $option = new LazyInputOption(
             'option',
@@ -19,7 +14,7 @@ class LazyInputOptionTest extends \PHPUnit_Framework_TestCase
             InputOption::VALUE_OPTIONAL | LazyInputOption::OPTION_IS_LAZY
         );
 
-        $this->assertTrue($option->isMandatory());
+        $this->assertTrue($option->isLazy());
     }
 
     public function testAvailableValuesExecuteCallback()
