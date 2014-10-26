@@ -11,12 +11,12 @@ interface User
     /* public function ensureIsLoggedIn(); */
 
     /**
-     * @return StateUser
+     * @return User
      */
     public function update(array $userData);
 
     /**
-     * @return StateUser
+     * @return User
      */
     public function logout();
 
