@@ -26,7 +26,10 @@
     "autoload": {
         "psr-0": {
             "Kbize": "src/",
-            "Skel": "src/"
+            "Dsilva": "src/"
         }
+    },
+    "autoload-dev": {
+        "classmap": ["test/unit/"]
     }
 }

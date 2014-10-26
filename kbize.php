@@ -1,6 +1,7 @@
 <?php
 namespace Kbize;
 
+/* use Dsilva\ConsoleUtilities\Application; */
 use Symfony\Component\Console\Application;
 use Kbize\Console\Command\TaskListCommand;
 use Kbize\Console\Command\SelfUpdateCommand;

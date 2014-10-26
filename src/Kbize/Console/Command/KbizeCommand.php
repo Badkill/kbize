@@ -1,10 +1,13 @@
 <?php
 namespace Kbize\Console\Command;
 
-use Symfony\Component\Console\Command\Command;
+/* use Symfony\Component\Console\Command\Command; */
+use Dsilva\ConsoleUtilities\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputDefinition;
+use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
@@ -29,57 +32,60 @@ abstract class KbizeCommand extends Command
         ], $settings);
     }
 
-    protected function configure()
+    protected function options()
     {
-        $this
-            ->addOption(
+        return [
+            [
+                'name'        => 'profile',
+                'shortcut'    => 'e',
+                'mode'        => InputOption::VALUE_REQUIRED,
+                'description' => 'You can use different configuration for different profile',
+                'default'     => 'default'
+            ],
+            new LazyInputOption(
                 'project',
                 'p',
-                InputOption::VALUE_REQUIRED,
-                'The ID of the project'
-            )
-            ->addOption(
+                InputOption::VALUE_REQUIRED | LazyInputOption::OPTION_IS_LAZY,
+                'The ID of the project',
+                null,
+                function (InputInterface $input) {
+                    $projects = [];
+                    foreach($this->kernel($input)->getProjects() as $project) {
+                        $projects[$project['id']] = $project['name'];
+                    }
+
+                    return $projects;
+                }
+            ),
+            new LazyInputOption(
                 'board',
                 'b',
-                InputOption::VALUE_REQUIRED,
-                'The ID of the board whose structure you want to get.'
-            )
-            ->addOption(
-                'no-cache',
-                'x',
-                InputOption::VALUE_NONE,
-                'Do not use cached data'
-            )
-            ->addOption(
-                'profile',
-                'e',
-                InputOption::VALUE_REQUIRED,
-                'You can use different configuration for different profile',
-                'default'
-            )
-        ;
+                InputOption::VALUE_REQUIRED | LazyInputOption::OPTION_IS_LAZY,
+                'The ID of the board whose structure you want to get.',
+                null,
+                function (InputInterface $input) {
+                    $boards = [];
+                    foreach($this->kernel($input)->getBoards($input->getOption('project')) as $board) {
+                        $boards[$board['id']] = $board['name'];
+                    }
+
+                    return $boards;
+                }
+            ),
+            /* [ */
+            /*     'name'        => 'no-cache', */
+            /*     'shortcut'    => 'x', */
+            /*     'mode'        => InputOption::VALUE_NONE, */
+            /*     'description' => 'Do not use cached data' */
+            /* ], */
+        ];
     }
 
-    protected function missingParameterRequestSetUp()
+    protected function configure()
     {
-        $this->missingParameterRequest = new MissingMandatoryParametersRequest([
-            'project' => function () {
-                $projects = [];
-                foreach($this->kernel->getProjects() as $project) {
-                    $projects[$project['id']] = $project['name'];
-                }
-
-                return $projects;
-            },
-            'board' => function (InputInterface $input) {
-                $boards = [];
-                foreach($this->kernel->getBoards($input->getOption('project')) as $board) {
-                    $boards[$board['id']] = $board['name'];
-                }
-
-                return $boards;
-            }
-        ]);
+        foreach ($this->options() as $option) {
+            $this->addOption($option);
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -103,13 +109,6 @@ abstract class KbizeCommand extends Command
                 if ($needAuth) {
                     $this->authenticate($input, $output);
                 }
-
-                $this->missingParameterRequestSetUp();
-                $this->missingParameterRequest->enrichInputs(
-                    $input,
-                    $output,
-                    $this->getHelper('question')
-                );
 
                 $this->doExecute($input, $output);
                 break;
@@ -159,5 +158,14 @@ abstract class KbizeCommand extends Command
         return [
             'url' => $url,
         ];
+    }
+
+    private function kernel(InputInterface $input)
+    {
+        if (!$this->kernel) {
+            $this->kernel = $this->kernelFactory->forProfile($input->getOption('profile'));
+        }
+
+        return $this->kernel;
     }
 }

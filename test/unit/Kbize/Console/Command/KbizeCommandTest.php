@@ -5,6 +5,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Kbize\Console\Command\KbizeCommand;
@@ -12,7 +13,7 @@ use Kbize\KbizeKernel;
 use Kbize\KbizeKernelFactory;
 use Kbize\Console\MissingMandatoryParametersRequest;
 
-class KbizeCommandTest extends \PHPUnit_Framework_TestCase
+class KbizeCommandTest extends KbizeComandBaseTest
 {
     public function setUp()
     {
@@ -23,22 +24,18 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
         $this->application->add($this->sampleCommand);
     }
 
+    //FIXME:! move it out
     public function testAskForMandatoryOptionsIfThemAreMissing()
     {
         $projectId = 1;
+        $this->userIsAuthenticated();
 
-        $this->kernel->expects($this->at(0))
-            ->method('isAuthenticated')
-            ->will($this->returnValue(true))
-        ;
-
-        $command = $this->application->find('sample:command');
-        $dialog = $command->getHelper('question');
+        $dialog = $this->sampleCommand->getHelper('question');
         $dialog->setInputStream($this->getInputStream("foo"));
 
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->sampleCommand);
         $commandTester->execute([
-            'command' => $command->getName(),
+            'command' => $this->sampleCommand->getName(),
         ]);
 
         $this->assertRegExp("/foo.*bar\n.*bar.*foo/", $commandTester->getDisplay());
@@ -113,35 +110,24 @@ class KbizeCommandTest extends \PHPUnit_Framework_TestCase
             '--option' => 'foo',
         ]);
     }
-
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input);
-        rewind($stream);
-
-        return $stream;
-    }
-
-    private function kernelFactoryReturns($kernel)
-    {
-        $this->kernelFactory = $this->getMockBuilder('Kbize\KbizeKernelFactory')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->kernelFactory->expects($this->any())
-            ->method('forProfile')
-            ->will($this->returnValue($kernel))
-        ;
-    }
 }
 
 class SampleCommand extends KbizeCommand
 {
-    public function __construct(KbizeKernelFactory $kernel)
+    public function __construct(KbizeKernelFactory $kernel, array $settings = [])
     {
-        parent::__construct($kernel);
+        parent::__construct($kernel, $settings);
+    }
+
+    protected function options()
+    {
+        return [[
+            'name'        => 'profile',
+            'shortcut'    => 'e',
+            'mode'        => InputOption::VALUE_REQUIRED,
+            'description' => 'You can use different configuration for different profile',
+            'default'     => 'default'
+        ]];
     }
 
     protected function configure()
@@ -149,29 +135,25 @@ class SampleCommand extends KbizeCommand
         parent::configure();
 
         $this->setName('sample:command')
-            ->addOption(
+            ->addOption(new LazyInputOption(
                 'option',
                 'o',
-                InputOption::VALUE_OPTIONAL,
-                'sample option'
-            )
+                InputOption::VALUE_OPTIONAL | LazyInputOption::OPTION_IS_LAZY,
+                'sample option',
+                null,
+                function () {
+                    return [
+                        'foo' => 'bar',
+                        'bar' => 'foo',
+                    ];
+                }
+            ))
         ;
-    }
-
-    protected function missingParameterRequestSetUp()
-    {
-        $this->missingParameterRequest = new MissingMandatoryParametersRequest([
-            'option' => function () {
-                return [
-                    'foo' => 'bar',
-                    'bar' => 'foo',
-                ];
-            },
-        ]);
     }
 
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
+        $input->getOption('option');
         $taskCollection = $this->kernel
             ->getAllTasks(1)
         ;

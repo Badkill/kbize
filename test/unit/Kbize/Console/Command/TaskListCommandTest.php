@@ -10,7 +10,7 @@ use Kbize\Console\Command\TaskListCommand;
 use Kbize\Console\Helper\AlternateTableHelper;
 use Kbize\Collection\Tasks;
 
-class TaskListCommandTest extends \PHPUnit_Framework_TestCase
+class TaskListCommandTest extends KbizeComandBaseTest
 {
     public function setUp()
     {
@@ -23,11 +23,13 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         $this->application->add($this->taskList);
     }
 
-    public function testCallsGetAllTasksWithBoardIdAndFIltersReceivedInInputOption()
+    public function testCallsGetAllTasksWithBoardIdAndFiltersReceivedInInputOption()
     {
         $projectId = 1;
         $boardId = 2;
         $filters = ['foo'];
+
+        $this->userIsAuthenticated();
 
         $this->kernel->expects($this->once())
             ->method('getAllTasks')
@@ -36,9 +38,6 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         ;
 
         $command = $this->application->find('task:list');
-        $dialog = $command->getHelper('question');
-        $dialog->setInputStream($this->getInputStream("http://www.exaple.url\nemail@email.com\npassword"));
-
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
@@ -54,6 +53,8 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         $boardId = 2;
         $filters = ['foo', 'show'];
 
+        $this->userIsAuthenticated();
+
         $this->kernel->expects($this->once())
             ->method('getAllTasks')
             ->with($boardId)
@@ -61,9 +62,6 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         ;
 
         $command = $this->application->find('task:list');
-        $dialog = $command->getHelper('question');
-        $dialog->setInputStream($this->getInputStream("http://www.exaple.url\nemail@email.com\npassword"));
-
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
@@ -109,27 +107,5 @@ class TaskListCommandTest extends \PHPUnit_Framework_TestCase
         ;
 
         return $taskCollection;
-    }
-
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fputs($stream, $input);
-        rewind($stream);
-
-        return $stream;
-    }
-
-    private function kernelFactoryReturns($kernel)
-    {
-        $this->kernelFactory = $this->getMockBuilder('Kbize\KbizeKernelFactory')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->kernelFactory->expects($this->any())
-            ->method('forProfile')
-            ->will($this->returnValue($kernel))
-        ;
     }
 }
