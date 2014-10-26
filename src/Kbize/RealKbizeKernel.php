@@ -1,11 +1,7 @@
 <?php
 namespace Kbize;
 
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Yaml\Dumper;
-
 use Kbize\Collection\Tasks;
-use Kbize\Exception\ForbiddenException;
 use Kbize\Sdk\KbizeSdk;
 
 class RealKbizeKernel implements KbizeKernel

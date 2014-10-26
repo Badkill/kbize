@@ -2,9 +2,7 @@
 namespace Kbize\Console\Output;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Helper\TableHelper;
-
 use Kbize\Collection\TasksInterface;
 use Kbize\Console\String;
 

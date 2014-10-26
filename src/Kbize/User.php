@@ -10,8 +10,14 @@ interface User
 
     /* public function ensureIsLoggedIn(); */
 
+    /**
+     * @return StateUser
+     */
     public function update(array $userData);
 
+    /**
+     * @return StateUser
+     */
     public function logout();
 
     public function apikey();

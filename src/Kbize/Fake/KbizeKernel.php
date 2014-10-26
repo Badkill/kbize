@@ -2,8 +2,6 @@
 namespace Kbize\Fake;
 
 use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Yaml\Dumper;
-
 use Kbize\Collection\Tasks;
 use Kbize\Exception\ForbiddenException;
 

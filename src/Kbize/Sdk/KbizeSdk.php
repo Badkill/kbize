@@ -11,7 +11,7 @@ interface KbizeSdk
      * @param string $email Your email address
      * @param string $password Your email address
      *
-     * @return array with user information: [
+     * @return Response\Login with user information: [
      *   email       Your email address
      *   username    Your username
      *   realname    Your name
@@ -22,6 +22,9 @@ interface KbizeSdk
      */
     public function login($email, $password);
 
+    /**
+     * @return Response\ProjectAndBoards
+     */
     public function getProjectsAndBoards();
 
     public function getBoardStructure($boardId);
@@ -38,6 +41,9 @@ interface KbizeSdk
 
     public function getTaskDetails($boardId, $taskId, array $parameters = array());
 
+    /**
+     * @return Response\AllTasks
+     */
     public function getAllTasks($boardId, array $parameters = array());
 
     public function addComment($taskId, $comment);
@@ -52,5 +58,8 @@ interface KbizeSdk
 
     public function editSubtask($boardId, $subtaskId, array $parameters = array());
 
+    /**
+     * @return HttpKbizeSdk
+     */
     public function addHeader($key, $value);
 }
