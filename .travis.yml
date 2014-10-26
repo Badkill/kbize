@@ -1,17 +1,23 @@
 language: php
+notifications:
+    email:
+        - badkill82@gmail.com
 php:
     - 5.4
     - 5.5
 env:
-    - SYMFONY_VERSION=2.5.*
-    - SYMFONY_VERSION=dev-master
+    # - SYMFONY_VERSION=2.5.*
+    # - SYMFONY_VERSION=dev-master
 before_script:
-    - composer install
+    - composer install --prefer-source
     - php -S localhost:8000 simulator/index.php &
     - sleep 3
 script:
-    - phpunit --coverage-text
+    - phpunit --coverage-text --coverage-clover=coverage.clover
     - bin/behat --strict
-notifications:
-    email:
-        - badkill82@gmail.com
+after_script:
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+cache:
+    directories:
+        - $COMPOSER_CACHE_DIR
