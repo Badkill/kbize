@@ -24,6 +24,9 @@ class String
         ));
     }
 
+    /**
+     * @param string $color
+     */
     public function color($color)
     {
         if ($color) {

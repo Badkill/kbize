@@ -2,7 +2,6 @@
 namespace Kbize\Integration\Tester;
 
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 class CliCommandTester
 {
@@ -77,7 +76,7 @@ class CliCommandTester
     /**
      * Gets the input instance used by the last execution of the command.
      *
-     * @return InputInterface The current input instance
+     * @return string|null The current input instance
      */
     public function getInput()
     {

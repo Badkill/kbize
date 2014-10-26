@@ -11,5 +11,8 @@ interface KbizeKernel
 
     public function getBoards($projectId);
 
+    /**
+     * @return Collection\Tasks
+     */
     public function getAllTasks($boardId);
 }

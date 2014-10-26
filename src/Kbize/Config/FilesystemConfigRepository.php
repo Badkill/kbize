@@ -11,6 +11,9 @@ class FilesystemConfigRepository implements ConfigRepository
     private $parser;
     private $dumper;
 
+    /**
+     * @param string $filePath
+     */
     public function __construct($filePath, Parser $parser, Dumper $dumper)
     {
         $this->filePath = $filePath;

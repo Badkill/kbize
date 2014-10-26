@@ -4,8 +4,6 @@ namespace Kbize\Sdk;
 use Kbize\Http\Client;
 use Kbize\Sdk\Response\Login;
 use Kbize\Sdk\Response\ProjectAndBoards;
-use Kbize\Http\Exception\ForbiddenException;
-use Kbize\User;
 use Kbize\Sdk\Response\AllTasks;
 
 class HttpKbizeSdk implements KbizeSdk

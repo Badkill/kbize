@@ -2,9 +2,7 @@
 namespace Kbize\Console\Output;
 
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Helper\TableHelper;
-
 use Kbize\Collection\TasksInterface;
 use Kbize\Console\String;
 
@@ -65,6 +63,9 @@ class TaskListOutput
         return $this->settings[$short ? 'tasks.shortlist' : 'tasks.longlist'];
     }
 
+    /**
+     * @return string
+     */
     private function translateField($field, array $fixes = [])
     {
         if (array_key_exists($field, $this->headersFieldsTranslation)) {
@@ -74,6 +75,9 @@ class TaskListOutput
         return $field;
     }
 
+    /**
+     * @param TasksInterface $taskCollection
+     */
     private function rows($taskCollection, $fieldsToDisplay)
     {
         $rows = [];
