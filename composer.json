@@ -18,15 +18,15 @@
         "symfony/finder": "2.*",
         "symfony/yaml": "2.*",
         "symfony/process": "2.*",
-        "herrera-io/phar-update": "1.*"
+        "herrera-io/phar-update": "1.*",
+        "silvadanilo/lazy-option-command": "dev-master"
     },
     "config": {
         "bin-dir": "bin/"
     },
     "autoload": {
         "psr-0": {
-            "Kbize": "src/",
-            "Dsilva": "src/"
+            "Kbize": "src/"
         }
     },
     "autoload-dev": {

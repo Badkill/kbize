@@ -1,11 +1,11 @@
 <?php
 namespace Test\Kbize\Console\Command;
 
+use LazyOptionCommand\Input\LazyInputOption;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use Kbize\Console\Command\KbizeCommand;

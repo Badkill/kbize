@@ -47,7 +47,8 @@
             "vendor/herrera-io",
             "vendor/seld/jsonlint",
             "vendor/justinrainbow/json-schema",
-            "vendor/kherge/version"
+            "vendor/kherge/version",
+            "vendor/silvadanilo",
         ]
     }],
     "git-commit": "git-commit",

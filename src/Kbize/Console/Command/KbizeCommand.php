@@ -1,12 +1,12 @@
 <?php
 namespace Kbize\Console\Command;
 
-use Dsilva\ConsoleUtilities\Command\Command;
+use LazyOptionCommand\Command\Command;
+use LazyOptionCommand\Input\LazyInputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputDefinition;
-use Dsilva\ConsoleUtilities\Input\LazyInputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
