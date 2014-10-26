@@ -21,10 +21,10 @@ box build -v
 #
 git checkout gh-pages
 
-cp kbize.phar downloads/kbize-${TAG}.phar
+cp bin/kbize.phar downloads/kbize-${TAG}.phar
 git add downloads/kbize-${TAG}.phar
 
-SHA1=$(openssl sha1 kbize.phar | cut -d ' ' -f2)
+SHA1=$(openssl sha1 bin/kbize.phar | cut -d ' ' -f2)
 
 JSON='name:"kbize.phar"'
 JSON="${JSON},sha1:\"${SHA1}\""

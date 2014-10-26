@@ -54,7 +54,7 @@
     "git-commit": "git-commit",
     "git-version": "git-version",
     "main": "kbize.php",
-    "output": "kbize.phar",
+    "output": "bin/kbize.phar",
     "replacements": {
         "manifest_url": "http://box-project.org/manifest.json"
     },
