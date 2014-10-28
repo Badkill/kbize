@@ -24,23 +24,6 @@ class KbizeCommandTest extends KbizeComandBaseTest
         $this->application->add($this->sampleCommand);
     }
 
-    //FIXME:! move it out
-    public function testAskForMandatoryOptionsIfThemAreMissing()
-    {
-        $projectId = 1;
-        $this->userIsAuthenticated();
-
-        $dialog = $this->sampleCommand->getHelper('question');
-        $dialog->setInputStream($this->getInputStream("foo"));
-
-        $commandTester = new CommandTester($this->sampleCommand);
-        $commandTester->execute([
-            'command' => $this->sampleCommand->getName(),
-        ]);
-
-        $this->assertRegExp("/foo.*bar\n.*bar.*foo/", $commandTester->getDisplay());
-    }
-
     public function testAskForUsernameAndPasswordInCaseOfForbiddenException()
     {
         $username = 'username@email.com';
@@ -119,26 +102,15 @@ class SampleCommand extends KbizeCommand
         parent::__construct($kernel, $settings);
     }
 
-    protected function options()
-    {
-        return [[
-            'name'        => 'profile',
-            'shortcut'    => 'e',
-            'mode'        => InputOption::VALUE_REQUIRED,
-            'description' => 'You can use different configuration for different profile',
-            'default'     => 'default'
-        ]];
-    }
-
     protected function configure()
     {
         parent::configure();
 
         $this->setName('sample:command')
-            ->addOption(new LazyInputOption(
+            ->addRawOption(new LazyInputOption(
                 'option',
                 'o',
-                InputOption::VALUE_OPTIONAL | LazyInputOption::OPTION_IS_LAZY,
+                InputOption::VALUE_OPTIONAL,
                 'sample option',
                 null,
                 function () {

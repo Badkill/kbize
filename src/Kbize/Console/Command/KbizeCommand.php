@@ -29,19 +29,18 @@ abstract class KbizeCommand extends Command
     protected function options()
     {
         return [
-            [
-                'name'        => 'profile',
-                'shortcut'    => 'e',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'description' => 'You can use different configuration for different profile',
-                'default'     => 'default'
-            ],
+            new InputOption(
+                'profile',
+                'i',
+                InputOption::VALUE_REQUIRED,
+                'You can use different configuration for different profile',
+                'default'
+            ),
             new LazyInputOption(
                 'project',
                 'p',
-                InputOption::VALUE_REQUIRED | LazyInputOption::OPTION_IS_LAZY,
+                InputOption::VALUE_REQUIRED,
                 'The ID of the project',
-                null,
                 function (InputInterface $input) {
                     $projects = [];
                     foreach($this->kernel($input)->getProjects() as $project) {
@@ -54,9 +53,8 @@ abstract class KbizeCommand extends Command
             new LazyInputOption(
                 'board',
                 'b',
-                InputOption::VALUE_REQUIRED | LazyInputOption::OPTION_IS_LAZY,
+                InputOption::VALUE_REQUIRED,
                 'The ID of the board whose structure you want to get.',
-                null,
                 function (InputInterface $input) {
                     $boards = [];
                     foreach($this->kernel($input)->getBoards($input->getOption('project')) as $board) {
@@ -78,14 +76,17 @@ abstract class KbizeCommand extends Command
     protected function configure()
     {
         foreach ($this->options() as $option) {
-            $this->addOption($option);
+            $this->addRawOption($option);
         }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         //FIXME:! it needed only for behat!
-        $input->setInteractive(true);
+        if ('test' === $this->settings['env']) {
+            $input->setInteractive(true);
+        }
+
         for ($i = 0; $i < 5; $i++) {
             try {
                 $this->kernel = $this->kernelFactory->forProfile($input->getOption('profile'));
