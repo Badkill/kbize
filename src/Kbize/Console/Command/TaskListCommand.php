@@ -46,7 +46,9 @@ class TaskListCommand extends KbizeCommand
             ->addArgument(
                 'filters',
                 InputArgument::IS_ARRAY,
-                []
+                "Filters to filter result, you can use any word an it will be searched on any field, \n" .
+                "You can use @name to filter on asignee column only\n" .
+                "You can use =id to filter on taskid column only"
             )
         ;
     }
