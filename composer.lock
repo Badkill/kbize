@@ -404,12 +404,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/silvadanilo/lazy-option-command.git",
-                "reference": "dcf7db1cb2e479171e04222b8bb283582a7c0b2c"
+                "reference": "9aa58457495ac71cdd5f62e833b02324b20d0b79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/silvadanilo/lazy-option-command/zipball/dcf7db1cb2e479171e04222b8bb283582a7c0b2c",
-                "reference": "dcf7db1cb2e479171e04222b8bb283582a7c0b2c",
+                "url": "https://api.github.com/repos/silvadanilo/lazy-option-command/zipball/9aa58457495ac71cdd5f62e833b02324b20d0b79",
+                "reference": "9aa58457495ac71cdd5f62e833b02324b20d0b79",
                 "shasum": ""
             },
             "require": {
@@ -441,7 +441,7 @@
             "keywords": [
                 "console"
             ],
-            "time": "2014-10-28 07:35:05"
+            "time": "2014-10-28 20:56:58"
         },
         {
             "name": "symfony/config",

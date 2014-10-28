@@ -41,12 +41,12 @@ abstract class KbizeCommand extends Command
                 'p',
                 InputOption::VALUE_REQUIRED,
                 'The ID of the project',
+                null,
                 function (InputInterface $input) {
                     $projects = [];
                     foreach($this->kernel($input)->getProjects() as $project) {
                         $projects[$project['id']] = $project['name'];
                     }
-
                     return $projects;
                 }
             ),
@@ -55,12 +55,12 @@ abstract class KbizeCommand extends Command
                 'b',
                 InputOption::VALUE_REQUIRED,
                 'The ID of the board whose structure you want to get.',
+                null,
                 function (InputInterface $input) {
                     $boards = [];
                     foreach($this->kernel($input)->getBoards($input->getOption('project')) as $board) {
                         $boards[$board['id']] = $board['name'];
                     }
-
                     return $boards;
                 }
             ),
