@@ -5,6 +5,7 @@ use Kbize\Http\Client;
 use Kbize\Sdk\Response\Login;
 use Kbize\Sdk\Response\ProjectAndBoards;
 use Kbize\Sdk\Response\AllTasks;
+use Kbize\Sdk\Response\BoardStructure;
 
 class HttpKbizeSdk implements KbizeSdk
 {
@@ -52,7 +53,15 @@ class HttpKbizeSdk implements KbizeSdk
 
     public function getFullBoardStructure($boardId)
     {
-        throw new \Exception('Not implemented yet');
+        $response = $this->client->post('get_full_board_structure', [
+            'boardid' => $boardId,
+        ], [
+            'Content-Type' => 'application/json',
+            'Accept'       => 'application/json',
+            'apikey'       => $this->apikey,
+        ]);
+
+        return BoardStructure::fromArrayResponse($response->json());
     }
 
     public function getBoardSettings($boardId)

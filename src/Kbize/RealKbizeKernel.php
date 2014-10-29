@@ -45,4 +45,9 @@ class RealKbizeKernel implements KbizeKernel
         $allTaskResponse = $this->sdk->getAllTasks($boardId);
         return Tasks::fromArray($allTaskResponse->toArray());
     }
+
+    public function getBoardStructure($boardId)
+    {
+        return $this->sdk->getFullBoardStructure($boardId);
+    }
 }
